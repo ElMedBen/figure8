@@ -13,3 +13,20 @@
   * **ML Pipeline** : To build and export a pretrained model as a pkl file for later use, you can run the following command `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 
   * **Run app** : To run the app and use the classification pkl for predicting and showing results, you can run the following command `python app/run.py` and to check the result, just open this link `http://localhost:3001` on your browser.
+
+
+
+├─ app
+│  ├─ run.py
+│  └─ templates
+│     ├─ go.html
+│     └─ master.html
+├─ data
+│  ├─ DisasterResponse.db
+│  ├─ disaster_categories.csv
+│  ├─ disaster_messages.csv
+│  └─ process_data.py
+├─ models
+│  ├─ classifier.pkl
+│  └─ train_classifier.py
+└─ README.md
