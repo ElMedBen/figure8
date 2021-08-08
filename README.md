@@ -1,6 +1,35 @@
-# Disaster Response Pipeline Project
+# Disaster Response Pipeline Project 
 
-### Instructions:
+
+
+## Project overview
+
+
+This project is about analysing disaster data from Figure Eight to build a mondel for an API that classifies disaster messages. It helps to parse and preprocess csv raw data, input it into a machine learning pipline and output a predicted type of message .
+
+The project is structured in two main parts : 
+
+* **ETL and ML pipelines** that take cares of importing, preprocessing and pretraining a model for later usage
+* **An app that runs on FLASK** and that help to visualise the results of the whole process by using some plotly figures
+
+Check the further details section to go deeper into the prerequisits and how to run the app.
+
+## Prerequisits and Instructions
+
+### Dependencies
+
+To run the project app and pipeline scripts, the user needs to intall the folowing items : 
+
+* **Python 3.6x**
+* **Machine Learning Libraries: NumPy, SciPy, Pandas, Sciki-Learn**
+* **Natural Language Process Libraries: NLTK**
+* **SQLlite Database Libraqries: SQLalchemy**
+* **Model Loading and Saving Library: Pickle**
+* **Web App and Data Visualization: Flask, Plotly**
+
+
+
+### How to:
 
 * **Downloading** : To download and use the project app, clone the repo by using this command : 
 
@@ -13,9 +42,10 @@
   * **ML Pipeline** : To build and export a pretrained model as a pkl file for later use, you can run the following command `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 
   * **Run app** : To run the app and use the classification pkl for predicting and showing results, you can run the following command `python app/run.py` and to check the result, just open this link `http://localhost:3001` on your browser.
+ 
 
-
-
+### Folder structure :
+```
 ├─ app
 │  ├─ run.py
 │  └─ templates
@@ -30,3 +60,4 @@
 │  ├─ classifier.pkl
 │  └─ train_classifier.py
 └─ README.md
+```
