@@ -1,9 +1,8 @@
 # Disaster Response Pipeline Project 
 
-
-
 ## Project overview
 
+![Figure eight logo](https://upload.wikimedia.org/wikipedia/en/a/a6/Attached_to_figure-eight-dot-com.png)
 
 This project is about analysing disaster data from Figure Eight to build a mondel for an API that classifies disaster messages. It helps to parse and preprocess csv raw data, input it into a machine learning pipline and output a predicted type of message .
 
@@ -27,8 +26,6 @@ To run the project app and pipeline scripts, the user needs to intall the folowi
 * **Model Loading and Saving Library: Pickle**
 * **Web App and Data Visualization: Flask, Plotly**
 
-
-
 ### How to:
 
 * **Downloading** : To download and use the project app, clone the repo by using this command : 
@@ -42,9 +39,8 @@ To run the project app and pipeline scripts, the user needs to intall the folowi
   * **ML Pipeline** : To build and export a pretrained model as a pkl file for later use, you can run the following command `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 
   * **Run app** : To run the app and use the classification pkl for predicting and showing results, you can run the following command `python app/run.py` and to check the result, just open this link `http://localhost:3001` on your browser.
- 
 
-### Folder structure :
+## Folder structure :
 ```
 ├─ app
 │  ├─ run.py
@@ -61,3 +57,14 @@ To run the project app and pipeline scripts, the user needs to intall the folowi
 │  └─ train_classifier.py
 └─ README.md
 ```
+
+## Author
+[El Mehdi Benammi](https://github.com/ElMedBen)
+
+## License 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
+
+
+
