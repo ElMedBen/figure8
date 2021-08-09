@@ -1,3 +1,5 @@
+# importing all the required libraries
+
 import sqlite3
 import pandas as pd
 import re
@@ -5,8 +7,9 @@ import sys
 from joblib import dump
 import nltk
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.metrics import classification_report
@@ -15,12 +18,23 @@ from sklearn.model_selection import GridSearchCV
 nltk.download(["punkt", "wordnet", "averaged_perceptron_tagger"])
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-from sklearn.base import BaseEstimator, TransformerMixin
+
 
 # ------------------------------------------------------------------------------
 
-
+# loading data from the database
 def load_data(database_filepath):
+    """
+    Function that loads data from stored database after ETL pipline
+
+    args :
+        database_filepath : relative filepath of the database within the project folder
+
+    returns :
+        X : table containing the messages preprocessed
+        y : the labels that will be predicted based on the text message
+        categories_names: names of the categories of messages in a list
+    """
 
     # create engine connection to database
     con = sqlite3.connect("{}".format(database_filepath))
@@ -42,8 +56,18 @@ def load_data(database_filepath):
 
 # ------------------------------------------------------------------------------
 
-
+# tokenizing data for NLP process
 def tokenize(text):
+    """
+    Function that apply simple preprocessing for nlp by removing url, tokenizing and lematizing. It outputs clean tokens
+
+    args:
+        text : text element from the base list that will be preprocessed
+
+    returns:
+        clean_tokens: list of clean tokens
+    """
+
     url_regex = (
         "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
     )
@@ -67,88 +91,90 @@ def tokenize(text):
 
 
 # ------------------------------------------------------------------------------
-class StartingVerbExtractor(BaseEstimator, TransformerMixin):
-    """
-    Starting Verb Extractor class
-
-    This class extract the starting verb of a sentence,
-    creating a new feature for the ML classifier
-    """
-
-    def starting_verb(self, text):
-        sentence_list = nltk.sent_tokenize(text)
-        for sentence in sentence_list:
-            pos_tags = nltk.pos_tag(tokenize(sentence))
-            first_word, first_tag = pos_tags[0]
-            if first_tag in ["VB", "VBP"] or first_word == "RT":
-                return True
-        return False
-
-    # Given it is a tranformer we can return the self
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X_tagged = pd.Series(X).apply(self.starting_verb)
-        return pd.DataFrame(X_tagged)
-
-
-# ------------------------------------------------------------------------------
-
-
+# building model and preparing the parameters
 def build_model():
+    """
+    Function that build the model by preparing the parameters of gridsearch and instantiating the models
+    args:
+        None
+    returns:
+        cv : gridsearch model
+    """
+
+    DTC = DecisionTreeClassifier(
+        random_state=11, max_features="auto", class_weight="auto", max_depth=None
+    )
+
+    parameters = {
+        "vect__max_df": [0.5, 1.0],
+        "tfidf__use_idf": (True, False),
+        "multi_out_clf__estimator__learning_rate": [0.01, 0.1, 1],
+        "multi_out_clf__estimator__n_estimators": [1, 10],
+    }
 
     pipeline = Pipeline(
         [
-            (
-                "features",
-                FeatureUnion(
-                    [
-                        (
-                            "text_pipeline",
-                            Pipeline(
-                                [
-                                    (
-                                        "count_vectorizer",
-                                        CountVectorizer(tokenizer=tokenize),
-                                    ),
-                                    ("tfidf_transformer", TfidfTransformer()),
-                                ]
-                            ),
-                        ),
-                        ("starting_verb_transformer", StartingVerbExtractor()),
-                    ]
-                ),
-            ),
-            ("classifier", MultiOutputClassifier(AdaBoostClassifier())),
+            ("vect", CountVectorizer(tokenizer=tokenize)),
+            ("tfidf", TfidfTransformer()),
+            ("multi_out_clf", MultiOutputClassifier(AdaBoostClassifier())),
         ]
     )
 
-    return pipeline
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, verbose=2)
+
+    return cv
 
 
 # ------------------------------------------------------------------------------
 
+# Function to evaluate the model
+
 
 def evaluate_model(model, X_test, y_test):
+    """
+    Function that helps to evaluate the model by printing the classification report for each label predicted. It also present the best paramters used in grid search
+    args:
+        model: built and fited model to training data
+        X_test: testing messages selected from the train, test split
+        y_test: testing labels selected from the train, test split
+    returns:
+        printed best parameters from gridsearch and classification report for each label
+
+    """
+    model.best_estimator_.steps
 
     y_pred = model.predict(X_test)
-
     for idv, label in enumerate(y_test.columns):
+        print(label, "\n")
         print(classification_report(y_test[label], y_pred[:, idv]))
 
 
 # ------------------------------------------------------------------------------
 
-
+# saving model for later usage
 def save_model(model, model_filepath):
+    """
+    Function that dumps the model as a pkl for later use. Just make sur to put .pkl at the end of the name
+    args:
+        model: pretrained and fitted model
+        model_filepath: file path to save the model with .pkl as format
+    returns:
+        dumped model as pkl in filepath
+    """
     dump(model, model_filepath)
 
 
 # ------------------------------------------------------------------------------
 
-
+# main function to execute the full process
 def main():
+    """
+    Function that executes the main process by leveraging all functions
+    args:
+        None
+    returns:
+        Execute the full process from loading to printing scores and save the pretrained model
+    """
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print("Loading data...\n    DATABASE: {}".format(database_filepath))
@@ -169,10 +195,6 @@ def main():
         save_model(model, model_filepath)
 
         print("Trained model saved!\n")
-
-        print("overall testing score is : ", model.score(X_test, y_test), "\n")
-
-        print("overall training score is : ", model.score(X_train, y_train))
 
     else:
         print(
