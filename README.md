@@ -6,11 +6,10 @@
 
 Managing Disasters by quickly addressing the issue and providing the need help and support, requires an near immediate sharing of the given issue. If people can get their help quickly just by analyzing the arrival of disaster related messages and by quickly parsing them to identify the type of issue and what needs to be done ? Here comes Figure Eight.
 
-```
-Figure Eight (formerly known as Dolores Lab, CrowdFlower) is a human-in-the-loop machine learning and artificial intelligence company based in San Francisco.
+
+> Figure Eight (formerly known as Dolores Lab, CrowdFlower) is a human-in-the-loop machine learning and artificial intelligence company based in San Francisco.
 It uses human intelligence to do simple tasks such as transcribing text or annotating images to train machine learning algorithms.
 
-```
 
 This project is about analyzing disaster data from Figure Eight to build a model for an API that classifies disaster messages. It helps to parse and preprocess csv raw data, input it into a machine learning pipeline and output a predicted type of message . The obtained result can help to analyse messages and to identify the specific type of issue so that it can be addressed right away .
 
