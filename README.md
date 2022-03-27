@@ -65,8 +65,7 @@ To run the project app and pipeline scripts, the user needs to intall the folowi
 └─ README.md
 ```
 
-## Author
-[El Mehdi Benammi](https://github.com/ElMedBen)
+
 
 ## License 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
